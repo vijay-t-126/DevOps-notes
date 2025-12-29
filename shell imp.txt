@@ -1,0 +1,291 @@
+\
+=\1. Find Duplicate Files in Directory
+find /path/to/dir -type f -exec sha256sum {} + | sort | uniq -d -w64
+find /path/to/dir -type f -printf "%f %p\n" | sort | uniq -d -w100
+======================================
+2. Check and Restart Services
+#!/bin/bash
+service="sshd crond docker"
+for i in $service
+do
+  output=`systemctl is-active $i`
+  if [ $output != active ]; then
+     echo "$i is down or its in inactive mode" >> notification
+	 cat notification
+	 echo "issue in the service" | mail -s "Alert on $i service" tranju664@gmail
+	 sudo systemctl start $i
+  else
+    echo "$i is up"
+  fi
+done
+============================================
+3. Archive Files Modified in Last 24 Hours
+#!/bin/bash
+
+# Directory to search
+SOURCE_DIR="/path/to/dir"
+
+# Archive output file (timestamped)
+ARCHIVE_NAME="archive_$(date +%Y%m%d_%H%M%S).tar.gz"
+
+# Find files modified in the last 24 hours and archive them
+find "$SOURCE_DIR" -type f -mtime -1 | tar -czf "$ARCHIVE_NAME" -T -
+
+echo "Archive created: $ARCHIVE_NAME"
+================================================
+4. Backup Directory Excluding Certain Files
+#!/bin/bash
+
+# Directory to backup
+SOURCE_DIR="/path/to/source"
+
+# Destination archive
+BACKUP_FILE="/path/to/backup/backup_$(date +%Y%m%d_%H%M%S).tar.gz"
+
+# Exclude patterns (add as many --exclude options as you need)
+tar -czf "$BACKUP_FILE" \
+    --exclude="*.tmp" \
+    --exclude="*.log" \
+    --exclude="cache/*" \
+    -C "$SOURCE_DIR" .
+
+echo "Backup created: $BACKUP_FILE"
+============================================
+5. Delete Log Files Older Than 7 Days
+#!/bin/bash
+
+find -type f -name "*.log" -mtime +7 -delete
+find /path/to/dir -type f -name "*.log" -mtime +7 -exec rm -f {} \;
+find /path/to/dir -type f -name "*.log" -mtime +7 -print0 | xargs -0 rm -f
+
+=====================================
+6. Compress 5 Largest Files
+ls -S /path/to/dir/* | head -n 5 | xargs tar -czf largest_files.tar.gz
+find /path/to/dir -type f -printf "%s %p\n" | sort -nr | head -n 5 | awk '{print $2}' | xargs tar -czf largest_files.tar.gz
+====================================
+7. Top 5 CPU Consuming Processes
+
+ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%cpu | head -n 6
+=====================================
+8. Count how many users are currently logged in
+#!/bin/bash
+
+# Count logged-in users
+USER_COUNT=$(who | wc -l)
+
+echo "Number of users currently logged in: $USER_COUNT"
+===============================
+9. Find number of files in a directory
+#!/bin/bash
+
+# Directory to check 
+DIR="/path/to/dir"
+
+# Count files (not directories)
+FILE_COUNT=$(find "$DIR" -type f | wc -l)
+#for pwd FILE_COUNT=$(find "$DIR" -maxdepth 1 -type f | wc -l)
+
+echo "Number of files in $DIR: $FILE_COUNT"
+========================================
+10. Monitor a log file in real-time for word "failed"
+#!/bin/bash
+
+# Path to the log file
+LOGFILE="/path/to/your/logfile.log"
+
+# Monitor the log file in real-time
+tail -F "$LOGFILE" | while read line; do
+    if echo "$line" | grep -qi "failed"; then
+        echo "ALERT: Found 'failed' -> $line"
+    fi
+done
+==========================
+11. Display the names of files larger than 1MB in current directory
+#!/bin/bash
+
+# Current directory
+DIR="."
+
+# Find and display files larger than 1MB
+echo "Files larger than 1MB in $DIR:"
+find "$DIR" -maxdepth 1 -type f -size +1M -printf "%f\n"
+===================================
+12. Check if a user exists on the system
+#!/bin/bash
+echo "enter the username"
+read user
+if getent passwd "$user" > /dev/null; then
+	echo "user $user exists"
+else 
+	echo "user $user does not exists"
+fi
+==========================
+13. Count number of running processes by a given user
+#!/bin/bash
+
+# Ask for username
+read -p "Enter username: " USER
+
+# Count processes owned by the user
+PROC_COUNT=$(ps -u "$USER" --no-heading | wc -l)
+
+echo "Number of running processes for user '$USER': $PROC_COUNT"
+=======================================
+14. Extract extension of files in a folder
+#!/bin/bash
+
+# Directory to check
+DIR="."
+
+echo "File extensions in $DIR:"
+
+for file in "$DIR"/*; do
+    if [ -f "$file" ]; then
+        # Extract extension (part after last dot)
+        ext="${file##*.}"
+        # Handle files without extension
+        if [ "$ext" != "$file" ]; then
+            echo "$file --> .$ext"
+        else
+            echo "$file --> (no extension)"
+        fi
+    fi
+done
+================================
+15. Install the packages in server using for loop ( git maven and java)
+#!/bin/bash
+package="git maven java"
+
+for i in $package
+do 
+	echo "installing the package $i"
+	sudo yum install $i -y
+done
+=====================================
+16. Loop through directories and list number of files in each
+#!/bin/bash
+
+# Base directory (current directory by default)
+BASE_DIR="."
+
+echo "Counting files in each directory under $BASE_DIR..."
+
+# Loop through directories
+for dir in "$BASE_DIR"/*/; do
+    if [ -d "$dir" ]; then
+        FILE_COUNT=$(find "$dir" -type f | wc -l)
+        echo "Directory: $dir --> $FILE_COUNT files"
+    fi
+done
+================================
+17. Check for the open ports using loop
+#!/bin/bash
+
+echo "Checking open ports using netstat..."
+
+# Extract open ports from netstat output
+for port in $(netstat -tuln | awk '{print $4}' | grep -Eo '[0-9]+$'); do
+    echo "Port $port is OPEN"
+done
+================================
+18. Write a script that pings a list of servers and logs whether each is UP or DOWN
+#!/bin/bash
+
+# List of servers to ping
+servers=("google.com" "yahoo.com" "github.com" "example.com")
+
+# Log file
+LOGFILE="server_status.log"
+
+echo "Checking server status... Results will be saved to $LOGFILE"
+echo "---- $(date) ----" >> "$LOGFILE"
+
+# Loop through servers
+for server in "${servers[@]}"; do
+    if ping -c 1 -W 2 "$server" &>/dev/null; then
+        echo "$server is UP"
+        echo "$server is UP" >> "$LOGFILE"
+    else
+        echo "$server is DOWN"
+        echo "$server is DOWN" >> "$LOGFILE"
+    fi
+done
+
+echo "Check complete!"
+======================================
+19. Write a script to archive all files not accessed in the last 30 days.
+#!/bin/bash
+
+# Directory to check
+SOURCE_DIR="/path/to/source"
+
+# Archive destination
+ARCHIVE_DIR="/path/to/archive"
+
+# Ensure archive directory exists
+mkdir -p "$ARCHIVE_DIR"
+
+echo "Archiving files from $SOURCE_DIR not accessed in the last 30 days..."
+
+# Find files not accessed in last 30 days and move them to archive
+find "$SOURCE_DIR" -type f -atime +30 -exec mv {} "$ARCHIVE_DIR" \;
+
+echo "Archiving complete. Files moved to $ARCHIVE_DIR"
+======================================
+20. Create a menu-driven script to:
+---> List all .sh files
+---> Make them executable
+---> Run a selected one
+#!/bin/bash
+echo "enter the number"
+read n
+case $n in
+1) find -type f -name "*.sh"
+;;
+2) sudo chmod +x *.sh
+;;
+3) echo "enter the filename"
+   read file
+	if [ -f $file ]; then
+	   sh $file
+	else
+		echo "file not found"
+	fi
+;;
+*) echo "invalid data"
+;;
+esac
+========================	
+21. Write a script to tail multiple logs at once (multi-tail).
+#!/bin/bash
+
+# List of log files to tail
+LOGS=(
+    "/var/log/syslog"
+    "/var/log/auth.log"
+    "/var/log/nginx/access.log"
+    "/var/log/nginx/error.log"
+)
+
+echo "Starting multi-tail on selected logs..."
+echo "Press Ctrl+C to stop."
+
+# Loop through logs and start tail in background
+for log in "${LOGS[@]}"; do
+    if [ -f "$log" ]; then
+        # Run tail in background with prefix
+        tail -f "$log" | sed "s/^/[$log] /" &
+    else
+        echo "Log file not found: $log"
+    fi
+done
+
+# Wait for all background tails
+wait
+==============================
+22.  Get all the users shell
+#!/bin/bash
+
+echo "Listing all users and their shells:"
+getent passwd | awk -F: '{print $1, $7}'
+======================================

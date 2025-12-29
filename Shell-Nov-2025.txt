@@ -1,0 +1,829 @@
+SHELL
+------------------------------------------------------------------------------------------------------------------------------------------
+Class -01 16-12-2025
+------------------------------------------------------------------------------------------------------------------------------------------
+Shell Scripting
+To Perform repetitive tasks instead of running all the commands manually one by one , we can write then in a single file called shell script.
+
+c shell
+z shell
+k shell
+bash shell
+
+echo $SHELL -----> To check the current shell
+chsh -s <Shell_name> ---> To change the current shell
+
+sudo yum install ksh
+which ksh ----> To check the shell path
+chsh -s /usr/bin/ksh ----> To change the current shell to ksh
+
+Shebang
+The first line of the script strt with shebang
+     #!/bin/bash
+it invokes the bash shell and if it is not used in the shell script, the default shell will be used
+
+To execute any shell script
+1. sh <script.sh>
+2. bash <script.sh>
+3. ./ <script.sh>
+
+To execute the script via ./ method, the owner should have the execute permission
+
+chmod u+x <script.sh>
+--------------------------------------------------------------------------------------
+Example1: To install the Packages
+
+#!/bin/bash
+echo "installation of git"
+sudo yum install git -y 
+
+echo "installation of java"
+sudo yum install java -y
+
+echo "installation of maven"
+sudo yum install maven -y
+---------------------------------------------------------------------------------------
+Example2:
+#!/bin/bash
+echo "starting the docker server"
+sudo systemctl start docker
+---------------------------------------------------------------------------------------
+Example3:
+#!/bin/bash
+echo "Welcome to ss $1 and it is the $2 class"
+
+sh example.sh training shell
+output:
+Welcome to ss training and it is the shell class
+---------------------------------------------------------------------------------------
+Example4:
+#!/bin/bash
+name=$1
+place=$2
+age=$3
+
+echo "My name is $name and my age is $age and my place is $place"
+
+output:
+My name is sagar my age is 29 and my place is Dharwad
+---------------------------------------------------------------------------------------
+Example5:
+#!/bin/bash
+echo "enter the name"
+read name
+echo "enter the age"
+read age
+echo "enter the place"
+read place
+
+echo "My name is $name and my place is $place and my age is $age"
+
+output:
+My name is sagar and my place is dharwad and my age is 29
+---------------------------------------------------------------------------------------
+Variable
+
+A variable is a character string to which we assign the value
+
+The name of variable can contain only letters number and underscore(_)
+
+To access any created variable, we have use $ symbol followed by the variable name
+
+To pass the arguments/values to the script during the run time we can use $1, $2 ...................................
+---------------------------------------------------------------------------------------
+Special variables
+
+$0  ----> Gives the name of the script, that we are working
+$#  ----> Gives the number of arguments passed to the script
+$*  ----> Gives all the arguments passed to the script
+$@  ----> Gives all the arguments passed to the script in array format
+
+| Expression | Loop runs | Behavior               |
+| ---------- | --------- | ---------------------- |
+| `"$*"`     | 1 time    | All arguments combined |
+| `"$@"`     | N times   | One loop per argument  |
+
+
+
+$? ----> It gives the status of last executed command
+Any number other than Zero(0) it says, the last executed command is not proper
+
+example:
+if you get 1 as a error code ----> Represents the operation not permitted error
+if you get 127 as a error code --> It may be related to any other issue in the command or code
+
+ps -c ---> It is used to check the major running process on the server
+$$  -----> Gives the PID of the current shell (script or terminal) 
+$!  -----> Gives the PID of the last process which went on the background
+
+ex:
+sleep 30 &
+echo $!
+----------------------------------------------------------------------------------------
+#!/bin/bash
+echo "welcome to ss $1 and it is the $2 class"
+
+echo "$0"
+echo "$#"
+echo "$*"
+echo "$?"
+echo "$$"
+echo "$!"
+-----------------------------------------------------------------------------------------------------------------------------------------
+Class -02 18-12-2025
+-----------------------------------------------------------------------------------------------------------------------------------------
+Arithmetic Operators ( +,-,*,/)
+
+syntax;
+sum=`expr $1 + $2`
+sub=`expr $1 - $2`
+prod=`expr $1 \* $2`
+div=`expr $1 / $2`
+
+Example1:
+#!/bin/bash
+echo "Enter the value for number1"
+read num1
+echo "Enter the value for number2"
+read num2
+
+sum=`expr $num1 + $num2`
+sub=`expr $num1 - $num2`
+prod=`expr $num1 \* $num2`
+div=`expr $num1 / $num2`
+
+echo "The sum of 2 no's is $sum"
+echo "The sub of 2 no's is $sub"
+echo "The prod of 2 no's is $prod"
+echo "The div of 2 no's is $div"
+
+or
+
+#!/bin/bash
+echo "Enter the value for number1"
+read num1
+echo "Enter the value for number2"
+read num2
+
+sum=$(($num1 + $num2))
+sub=$(($num1 - $num2))
+prod=$(($num1 * $num2))
+div=$(($num1 / $num2))
+
+echo "The sum of 2 no's is $sum"
+echo "The sub of 2 no's is $sub"
+echo "The prod of 2 no's is $prod"
+echo "The div of 2 no's is $div"
+----------------------------------------------------------------------------------------------------------------
+Relational Operators -----> These are used to compare the values
+----------------------------------------------------------------------------------------------------------------
+string ----------> The below operators should be used when we are comparing the strigs
+==  ----> equal
+!=  ----> not equal
+<   ----> lesser than
+<=  ----> lesser than or equals
+>   ----> greater than
+>=  ----> greater than or equal
+
+Number -------> The below operators should be used when we are comparing the numbers
+-eq  ----> equal
+-ne  ----> not equal
+-lt   ----> lesser than
+-le  ----> lesser than or equals
+-gt   ----> greater than
+-ge  ----> greater than or equal
+-----------------------------------------------------------------------------------------------------------------
+IF Condition
+
+if [ condition ]; then
+    statement
+else
+    statement
+fi 
+
+or
+
+
+if [ condition1 ]; then
+    statement
+elif [ condition2 ]; then
+    statement
+if [ condition3 ]; then
+    statement	
+else
+    statement
+fi
+
+Example1: 
+Check the entered number is 5 or not
+#!/bin/bash
+echo "enter the value for num1"
+read num
+if [ $num -eq 5 ]; then
+   echo "The entered number is 5"
+elif [ $num -eq 7 ]; then
+   echo "The entered number is 7"
+elif [ $num -eq 3 ]; then
+   echo "The entered number is 3"
+else
+   echo "invalid input"
+fi
+
+Example2:
+Biggest of 2 no's
+#!/bin/bash
+echo "enter the value for number1"
+read num1
+echo "enter the value for number2"
+read num2
+
+if [ $num1 -gt $num2 ]; then
+   echo "$num1 is bigger"
+elif [ $num1 -eq $num2]; then
+   echo "$num1 is equal to $num2"
+else
+   echo "$num2 is bigger"
+fi
+------------------------------------------------------------------------------------------------------------------
+Debugging
+
+set -x ----> it helps us to debug the code ( Prints all the commands and their arguments being executed)
+
+Biggest of 2 no's
+#!/bin/bash
+echo "enter the value for number1"
+read num1
+echo "enter the value for number2"
+read num2
+set -x
+if [ $num1 -gt $num2 ]; then
+   echo "$num1 is bigger"
+elif [ $num1 -eq $num2]; then
+   echo "$num1 is equal to $num2"
+else
+   echo "$num2 is bigger"
+fi
+-------------------------------------------------------------------------------------------------------------------
+set +x  ----> This is used to stop the debugging mode on particular location/line in the script
+
+Biggest of 2 no's
+#!/bin/bash
+set -x
+echo "enter the value for number1"
+read num1
+echo "enter the value for number2"
+read num2
+set +x
+if [ $num1 -gt $num2 ]; then
+   echo "$num1 is bigger"
+elif [ $num1 -eq $num2]; then
+   echo "$num1 is equal to $num2"
+else
+   echo "$num2 is bigger"
+fi
+
+output:
++ '[' 4 -gt 6 ']'
++ '[' 4 -eq 6 ']'
++ echo '6 is bigger'
+6 is bigger
+--------------------------------------------------------------------------------------------------------------------
+set -e ----> To stop the script immediately when the command exits with non-zero status
+
+#!/bin/bash
+set -e
+echo 1 | grep z
+echo "enter the value for number1"
+read num1
+echo "enter the value for number2"
+read num2
+if [ $num1 -gt $num2 ]; then
+   echo "$num1 is bigger"
+elif [ $num1 -eq $num2 ]; then
+   echo "$num1 is equal to $num2"
+else
+   echo "$num2 is bigger"
+fi
+
+set --help ----> To know more about the debugging in shell
+----------------------------------------------------------------------------------------------------------------------
+File Operators
+
+This can be used check for both files and directories in current working directory
+
+[ -f $name ] ----> To check if it is a file
+[ -d $name ] ----> To check if it is a directory
+[ -r $name ] ----> To check if the file/dir has got the read permission
+[ -w $name ] ----> To check if the file/dir has got the write permission
+[ -x $name ] ----> To check if the file/dir has got the execute permission
+[ -s $name ] ----> To check if the file/dir has got some data
+[ -e $name ] ----> To check file or dir exist or not 
+
+Note: The script always checks only for the owner not for the group and others
+
+example:
+#!/bin/bash
+echo "enter the value"
+read name
+if [ -f $name ]; then
+   echo "$name is file"
+elif [ -d $name ]; then
+   echo "$name is dir"
+else
+   echo "$name does not exist"
+fi 
+-----------------------------------------------
+NESTED IF
+----------------------------------------------
+#!/bin/bash
+echo "enter the value"
+read name
+if [ -f $name ]; then
+   echo "$name is file"
+   if [ -r $name ]; then
+     echo "$name has got read permission"
+   else
+     echo "$name does not have read permission"
+   fi
+   if [ -w $name ]; then
+     echo "$name has got write permission"
+   else
+     echo "$name does not have write permission"
+   fi
+   if [ -x $name ]; then
+     echo "$name has got execute permission"
+   else
+     echo "$name does not have execute permission"
+   fi
+   if [ -s $name ]; then
+     echo "$name has got some data"
+	 cat $name 
+   else
+     echo "$name does not have any data"
+   fi
+elif [ -d $name ]; then
+   echo "$name is dir"
+else
+   echo "$name does not exist"
+fi
+-------------------------------------------------------------------------------------------------------------------------------
+Assignment:
+Find the biggest of 3 nos
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+Class -03 19-12-2025
+-----------------------------------------------------------------------------------------------------------------------------------------
+While loop ----> It is used to execute the statements until the condition becomes false
+
+syntax:
+
+while [ condition ]; do
+  statement
+done
+
+or
+while [ condition ]
+do
+   statement
+done
+
+example:
+Find the sum of n numbers
+
+#!/bin/bash
+echo "enter the value for n"
+read n
+original=$n
+sum=0
+while [ $n -gt 0 ]; do
+   sum=`expr $sum + $n`
+   n=`expr $n - 1'
+done
+echo "The sum of $original number is $sum"
+------------------------------------------
+example2: Find the factorial of n numbers
+5! ----> 5*4*3*2*1
+
+#!/bin/bash
+echo "enter the value for n"
+read n
+original=$n
+prod=1
+while [ $n -gt 0 ]; do
+   prod=`expr $prod \* $n`
+   n=`expr $n - 1`
+done
+echo "The prod of $original number is $prod"
+---------------------------------------------------------------------------------------------------------------------------------------------------
+While loop can also be used to read the file line by line (iterating the file)
+
+syntax:
+while read <variable_name>
+do
+   statement
+done < <file_name>
+
+or
+while read <variable_name>
+do
+   statement
+done < $<file_name>
+
+Example1: To print the contents of the file using the while loop
+we are working on the shell
+this is the shell class
+
+#!/bin/bash
+while read line
+do
+  echo $line
+done < test1
+
+1st iteration:
+line = we are working on the shell
+echo $line
+we are working on the shell
+
+2nd iteration:
+line = this is the shell class
+echo $line
+this is the shell class
+
+3rd iteration:
+it comes out of the loop
+
+or
+#!/bin/bash
+echo "enter the file name"
+read file
+while read line
+do
+  echo $line
+done < $file
+-------------------------------------------------------------------------------------------------------------------------------------------
+Example2
+we are working on the shell
+this is the shell class
+
+output:
+28
+24
+
+#!/bin/bash
+echo "enter the file name"
+read file
+while read line
+do
+  echo $line | wc -c
+done < $file
+-------------------------------------------------------------------------------------------------------------------------------------------
+Example3:
+we are working on the shell
+this is the shell class
+
+output:
+1 : 28
+2 : 24
+
+#!/bin/bash
+echo "enter the file name"
+read file
+l=1
+while read line
+do
+  c=`echo $line | wc -c`
+  echo "$l : $c"
+  l=`expr $l + 1`
+done < $file
+-------------------------------------------------------------------------------------------------------------------------------------------
+Example4:
+Write the script to get the names with age more than 20 years
+
+no name age
+1 abc 15
+2 def 31
+3 xyz 30
+4 ret 20
+
+output:
+def
+xyz
+
+#!/bin/bash
+echo "enter the file name"
+read file
+sed 1d $file > temp
+while read line
+do
+  age=`echo $line | cut -d " " -f3`
+  if [ $age -gt 20 ]; then
+        echo $line | cut -d " " -f2
+  fi
+done < temp
+rm temp
+----------------------------------------------------------------------------------------------------------------------------------------------
+Write the script to check if disksize is more than 25
+
+#!/bin/bash
+size=`df -h | sed -n 5p | awk -F " " '{print$(NF-1)}'| sed s/%//ig`
+if [ $size -gt 25 ]; then
+   echo "the disk size is full"
+else
+   echo "The disk has enough space"
+fi 
+-------------------------------------------------------------------------------------------------------------------------------------------------
+Assignment:
+1. Write the script to change all the files with extension .c to.txt (using readline)
+input:
+t1.c t2.c t3.c t4.c
+
+output:
+t1.txt t2.txt t3.txt t4.txt
+
+#!/bin/bash
+find -type f -name "*.c" > temp
+while read line
+do
+   name=`echo $line | sed s/.c/.txt/ig`
+   mv $line $name
+done <temp
+rm temp
+
+2. Write the scrip to add the even numbers using while loop
+#!/bin/bash
+echo "Enter the value for n"
+read n
+sum=0
+while [ $n -gt 0 ]
+do
+  rem=`expr $n % 2`
+  if [ $rem -eq 0 ]; then
+     sum=`expr $sum + $n`
+  fi
+  n=`expr $n - 1`
+done
+echo "The sum of even number is $sum"
+    	
+3. Check the file exist or not and check if it has got some data or not and also reverse the contents of the file
+
+4. Check for the dir exist or not, if it exists check it has got execute permission or not, if not provide the execute permission
+
+5. Check for RAM usage , if ram usage is more than 500MB , print the message like we are running out of memory
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Class -04 20-12-2025
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Cronjob
+The cronjob is Linux command used for scheduling of tasks, to be executed sometime in future
+
+syntax:
+
+*   *    *    *      *   command
+min hour date Month day  sh script.sh
+
+0 ---> Sunday
+1 ---> monday
+2 ---> Tuesday
+3 ---> Wednesday
+4 ---> Thursday
+5 ---> Friday
+
+10am on every sunday  ----> 00 */10 * * 0 sh script.sh
+11am on every monday and friday --> 00 */11 * * 1,5 sh script.sh
+11am on every monday to friday --> 00 */11 * * 1-5 sh script.sh
+every 15min                    --> */15 * * * * sh script.sh
+every 1min                     --> * * * * * sh script.sh
+10pm on july 8th on monday     --> 00 22 08 07 01 sh script.sh 
+
+
+crontab ----> This is the file contains all the cronjob entries to be run at a specific time
+crontab -e ---> To edit or create the cronjobs
+crontab -l ----> To list all the existing cronjobs
+crontab -r ----> It is used to remove(delete) the current user all cronjobs from crontab file
+
+Note: Cronjobs are specific to particular user only 
+
+sudo yum install cronie
+sudo systemctl status crond
+sudo systemctl start crond
+sudo systemctl stop crond
+sudo susyemctl restart crond
+
+
+#!/bin/bash
+size=`df -h | sed -n 5p | awk -F " " '{print$(NF-1)}'| sed s/%//ig`
+if [ $size -gt 25 ]; then
+   echo "the disk size is full"
+   echo "the disk size is full" | mail -s "disk usage alert" tranju664@gmail.com   
+else
+   echo "The disk has enough space"
+fi 
+--------------------------------------------------------------------------------------------------------------------
+mailx
+
+sudo yum install mailx
+
+syntax:
+echo "content" | mail  -s "subject" -c "cc" -b "bcc" <emaild_id>
+
+echo "the disk size is full" | mail -s "disk usage alert" -c "abc@gmail.com" -b "test@gmail.com,xyz@gmail.com" sstraining@gmail.com
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Class -05 21-12-2025
+---------------------------------------------------------------------------------------------------------------------------------------------------
+For Loop
+It is used to execute the statement for the given range of values
+
+syntax:
+for i in var1 var2 var3
+do
+ statement
+done
+
+for i in { 0....10} ----> The variable values goes from 0 to 10
+1st iteration
+i = 0
+2nd iteration
+i = 1
+3rd iteration
+i = 2
+.
+.
+.
+at 12th iteration it will come out of the loop
+
+for i in {0...100..10}  ----> The variable varies will go from 0 to 100 with the increment of 10 [ i=10, i=20 ......]
+
+for i in $*  ----> variable will take all the arguments passes to the script
+
+sh script.sh 1 2 3 4 5
+for i in $*
+i=1
+i=2
+i=3
+i-4
+i=5
+
+example1:
+find the sum of all the numbers passed to the script
+1 2 3 4 5
+
+output:
+15
+
+#!/bin/bash
+sum=0
+for i in $*
+do
+  sum=`expr $sum + $i`
+done
+echo "The sum of all number is $sum"
+---------------------------------------------------------------------------------------
+example2:
+find the prod of all the numbers passed to the script
+1 2 3 4 5
+
+output:
+120
+
+#!/bin/bash
+fact=1
+for i in $*
+do
+  fact=`expr $fact \* $i`
+done
+echo "The prod of all number is $fact"
+--------------------------------------------------------------------------------------
+example3:
+Find the factorial of a given set of numbers
+1 2 3 4 5
+
+output:
+Factorial of 1 is 1
+Factorial of 2 is 2
+Factorial of 3 is 6
+Factorial of 4 is 24
+Factorial of 5 is 120
+
+#!/bin/bash
+for i in $*
+do
+  fact=1
+  n=$i
+  while [ $n -gt 0 ]
+  do
+    fact=`expr $fact \* $n`
+	n=`expr $n - 1`
+  done
+  echo "The factorial of $i is $fact"
+done
+-----------------------------------------------------------------------------------------
+example4:
+Write the script to check, if the particular service is down and if its down bring it up and alert us
+
+#!/bin/bash
+service="sshd crond docker"
+for i in $service
+do
+  output=`systemctl is-active $i`
+  if [ $output != active ]; then
+     echo "$i is down or its in inactive mode" >> notification
+	 cat notification
+	 echo "issue in the service" | mail -s "Alert on $i service" tranju664@gmail
+	 sudo systemctl start $i
+  else
+    echo "$i is up"
+  fi
+done
+
+*/15 * * * * sh <script.sh>
+
+----------------------------------------------------------------------------------------------
+Case statement
+Menu based Operations
+
+#!/bin/bash
+echo "enter the value for n"
+read n
+case $n in
+1) echo "entered number is 1"
+;;
+2) echo "entered number is 2"
+;;
+3) echo "entered number is 3"
+;;
+*) echo "invalid input"
+;;
+esac
+-----------------------------------------------------------
+write the script based on the input day
+monday ----> Today is monday
+tuesday ---> Today is tuesday
+wednesday ---> Today is wednesday
+any other input ---> invalid input
+
+#!/bin/bash
+echo "enter the input for the day"
+read day
+case $day in
+monday) echo "Today is monday"
+;;
+tuesday) echo "Today is tuesday"
+;;
+wednesday) echo "Today is wednesday"
+;;
+*) echo "invalid input"
+;;
+esac
+--------------------------------------------------------------
+Write the script to perform the menu based operations
+1. search/find for the files based on the given input
+2. check the if the file exist or not by the given name
+3. create the softlink for the file
+4. invalid input
+
+#!/bin/bash
+echo "enter the value for n"
+read n
+case $n in
+1) echo "enter the file name"
+   read file
+   find -type f -name $file > sagar
+   cat sagar
+;;
+2) echo "enter the file name"
+   read name
+   if [ -f $name ]; then
+      echo "$name is exist"
+   else
+     echo "$name does not exist"
+   fi
+;;
+3) echo "enter the original path of the file"
+   read original
+   echo "enter the softlink name"
+   read softlink
+   ln -s $original $softlink
+;;
+*) echo "invalid input"
+;;
+esac
+----------------------------------------------------------------------------------------------------------------------------------------------
+Assignment:
+Learn about Functions in shell
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ 
+	 
+	 
+
+
+
+
+
+
+
+
+
+  
+
+

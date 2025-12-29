@@ -1,0 +1,226 @@
+GIT
+-----------------------------------------------------------------------------------------------
+Class -01 24-12-2025
+-----------------------------------------------------------------------------------------------
+Git is a version control tool designed to create and track the changes/versions in project file
+
+For to work with Gitbash ----> use pemkey (.pem)
+
+usual path: C:\Program Files\Git\etc\ssh
+ServerAliveInterval 50 ----> Add this content in the ssh.config and sshd.config files
+
+sudo yum install git -----------> To install the git
+git --version ------------------> To check the version of git
+sudo yum remove git ------------> To remove/uninstall git
+------------------------------------------------------------------------------------------------------------------------------------------------
+mkdir <directory>
+cd <directory>
+git init -----------------> It initializes the current directory as a git repository
+------------------------------------------------------------------------------------------------------------------------------------------------
+git config --global user.name "sagar"
+git config --global user.email "sagar@gmail.com"
+------------------------------------------------------------------------------------------------------------------------------------------------
+touch f1 f2
+
+git status -----> It shows the status of the file
+git add f1 -----> this f1 file will move from workspace to the staging area
+git status
+git commit -m "adding the file f1" ----> This file gets moved from staging to the local  repository
+-----------------------------------------------------------------------------------------------------------------------------------------------
+Git architecture
+
+4 stages:
+
+Workspace: it is the place, where we can edit the files and directories and workspace is visible to all the branches unless its added or committed
+
+index/Staging area: on git add, the files moves from workspace to the staging area, where we can save the changes.
+
+local repository: on git commit , the files move from staging to the local repository
+
+central/remote repository: on git push, the files are moved from local repository to the central/remote repository
+-----------------------------------------------------------------------------------------------------------------------------------------------
+Git status  -----> it shows whether the file are in workspace, staging or the local repository
+git add <file_name> ----> Move the files from workspace to the staging area
+git add . or git add * or git add -A ---> To move all the files/directories into the staging area
+git commit -m "message" ---> Move the files/directories from staging area to the local repository
+
+git log -----> Shows the history of repository (like author, commits, commit message etc.)
+
+git log -n -----> To check the latest commits.
+ex: git log -1 ---> it displays the latest last one commit 
+
+git log <file_name> ----> It gives the history of particular file
+ex: git log f1
+
+git log -n <file_name> ----> last n commits of a particular file
+ex: git log -1 f1
+---------------------------------------------------------------------------------------------------------------------------------------------------
+git restore --staged <file> ----> it is used to revert/unstage from staging to the workspace
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Note: Git does not track empty directories. If a folder has no files, it will not show up in git status or be committed to the repository
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Class -02 25-12-2025
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Branching
+Branching is a parallel development, 2 or more can work on the same piece of code on 2 or more different branches to develop the new feature and later integrate by merging
+
+HEAD ---> It represents the current commit you have checked onto and the current branch as well
+
+git branch ----> To list all the branches
+* -----> Indicates the current branch
+git branch <branch_name> ----> To create the new branch
+git checkout <branch_name> ----> To switch the branches
+
+git merge <branch_name> ----> The specific branch will get merged to the current/checked out branch
+example1:
+if you want to merge branch called feature1 to master ( first we need to checked out to the master and then we execute the command git merge feature1)
+
+git branch -d <branch_name> -----> To delete the branch
+
+git checkout <commit_id> ----> To checkout to the particular commit_id
+------------------------------------------------------------------------------------------------------------------------------------------------
+How to change the commit message
+
+git commit --amend -m "message"
+or
+git commit --amend ----> It will take us to the VI editor, there we need to change the commit message
+------------------------------------------------------------------------------------------------------------------------------------------------
+Tags
+It is the name given to the set of versions or commits , so as to remember and it also indicates the milestone of the project
+
+git tag ----> To list the tags
+git tag <tag_name> <commit_id> ---> To provide the tag  to the commit_id
+git branch <branch_name> <tag_name> ----> To create the branch from the tag
+git tag -d <tag_name> -----> To delete the tag
+
+Note: we cannot edit the tags
+-------------------------------------------------------------------------------------------------------------------------------------------------
+cherry-pick  ---> it is used merge the specific commit onto the current branch
+
+git cherry-pick <commit_id> ----> It is used to merge the specific commit onto the current branch
+-------------------------------------------------------------------------------------------------------------------------------------------------
+git revert <commit_id> ----> It is used to undo the committed changes but history will be tracked
+-------------------------------------------------------------------------------------------------------------------------------------------------
+Merge conflict:
+Merge conflict occurs when the same piece of code is modified in 2 branches and when we try to merge those 2 branches, merge conflict will occurs
+
+how should we resolve this?
+we should contact the developers, who modified the code in different branches, they will decide and inform us, whose changes need to be retained
+will take the changes and proceed to merge
+
+To get the list of developers ----> git log
+
+ex: create f1 file in master branch and put the content in the file f1 add and commit it
+    create the one more branch called feature1 from master and edit the f1 file add and commit it
+    checkout to master branch
+    edit the same file f1 again with some change add it and commit it
+    use git merge command to merge feature1 to master ( git merge feature1)
+    we will face merge conflict now
+    cat f1  ---> shows the merge conflict
+    then we have to contact developers to resolve the merge conflict by retaining the change
+    vi f1 ---> edit and save the changes and then add it and commit it
+    Then merge would have completed successfully
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Assignment:
+1. How the change the commit message of particular commit ID
+2. How to combine the multiple commits
+3. Difference between git merge and rebase
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Class -03 26-12-2025
+--------------------------------------------------------------------------------------------------------------------------------------------------- 
+Git stash 
+if you are working on one branch, in between if you get any critical issues to be fixed on the other branch, in this case, before you switch to the another branch, we need to stash our current branch (it will store in the temporary area).
+After completion of your work in the other branch, switch back to your current branch and get the stashed files using stash pop command
+
+git add * (optional)
+git stash
+git checkout <branch_name> (complete your work on the new branch)
+git checkout <current_branch>
+git stash pop (it will give you all the stashed files)
+----------------------------------------------------------------------------------------------------------------------------------------------------
+Git clone : it will bring the central repo to the local workspace for the first time
+git clone <repo_url>
+note: when we clone, automatically git init will be done and .git folder will be created
+
+git push: moves the changes from local repository to the central/remote repo
+git push <repo_url>
+
+git pull: brings the changes from central repo and merges automatically to the local workspace
+git pull <repo_url>
+
+git fetch: it brings the changes from central repo and stores it in a separate branch called FETCH_HEAD, here we can review the changes and merge it to the local workspace if required
+
+git fetch <repo_url>
+
+pull =fetch+merge
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+What is repository?
+A repository is a directory/folder where the project exist, it can be either local repository (on your computer) or the remote repository (github), it contains the entire codebase and the revision history
+
+bare repo  ----> acts as a remote/central repo, we can pull and push the code to this repo, cannot perform any git commands/operations here
+git init --bare
+
+non-bare repo ---> this is the local workspace/repo where we can edit the files and run all the git operations here
+git init
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Assignment:
+1. Git reset ?
+   ---> mixed
+   ---> soft
+   ---> hard
+2. What is .gitignore file?
+3. Difference between git reset vs git revert
+4. git show <commmit_iD>
+5. Git blame <commmit_iD>
+6. git bisect
+7. git diff
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+To push the tags to the remote repo
+
+git push origin <tag_name>
+or
+git push <repo_url> <tag_name>  
+
+git push origin --tags ----> To push all the tags to the remote
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Class-04 27-12-2025
+---------------------------------------------------------------------------------------------------------------------------------------------------
+GITHUB
+1. Account creation
+2. Public Repo ----> clone pull and push
+3. HTTP and SSH -----> clone pull and push
+4. PAT
+5. Private Repo  ----> Clone pull and push
+6. collaborator
+7. Create the branch from Git hub
+8. To Change the default branch
+9. PR and Merging of branches
+10. Branch Policy 
+11. Email Notification
+12. Tags
+13. Fork 
+---------------------------------------------------------------------------------------------------------------------------------------------------
+1. Build Tools
+2. Maven Life cycle
+
+Pre-requisites
+1. Git to be installed  ------> git --versions
+2. Java to be installed ------> java --version
+3. maven to be installed -----> mvn --version
+
+https://github.com/tranju664/example-java
+
+1. Fork the Repo
+2. Clone the repo
+3. cd <repository>
+4. mvn clean install
+5. you should be able to see the *.jar file in the target folder
+
+To start the java Application for *.jar artifact ----> java -jar *.jar
+--------------------------------------------------------------------------
+Assignment:
+1. Difference between maven and Gradle
+2. Difference between git and other version control tools
+3. How to clone particular branch
+--------------------------------------------------------------------------
