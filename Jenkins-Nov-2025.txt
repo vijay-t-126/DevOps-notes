@@ -1,0 +1,46 @@
+Jenkins
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+Jenkins is an opensource automation tool written in java, that automates some of the development lifecycle  like build, deploy and test
+
+Installation:
+1. Create an ubuntu server
+2. Java
+
+https://www.jenkins.io/download/
+
+Java Installation:
+sudo apt update
+sudo apt install fontconfig openjdk-21-jre
+java --version
+
+sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt update -y
+sudo apt install jenkins -y
+---------------------------------------------------------------
+
+lower Version
+
+sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt update -y
+sudo apt install fontconfig openjdk-17-jre -y
+sudo apt install jenkins=2.462.2 -y
+---------------------------------------------------------------
+
+sudo systemctl start jenkins
+sudo systemctl stop jenkins
+sudo systemctl restart jenkins
+sudo systemctl enable jenkins
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Assignment:
+1. Learn the difference between monolithic and microservices
+2. Install the Jenkins on ec2-server
+3. list all the cicd tools available in the market
+----------------------------------------------------------------------------------------------------------------------------------------------------
