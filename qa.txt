@@ -39,3 +39,26 @@ do
 done < temp
 rm temp
 ============================
+1)what are different status codes
+2)Git architecture
+3)how to push empty directory
+4)how to undo commit changes without tracking history
+5)git stash
+6)difference between merge and rebase
+7)difference between revert and reset
+8)how to push all tags
+9)difference between maven and gradle
+10)mvn clean install
+11) difference between jar,war and ear
+12)difference between git add .,git add *, git add -A
+13)how to get the tags from remote to local
+14)how to exclude one file during git add
+15)how to change port number for tomcat
+16)stickybit
+17)how to see all process with cpu usage
+18)how to clone one particular branch from remote repo to local
+19)maven lifecycle
+20)git squash
+
+
+
