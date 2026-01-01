@@ -1,5 +1,7 @@
 Jenkins
 -----------------------------------------------------------------------------------------------------------------------------------------------------
+Class -01 30-12-2025
+-----------------------------------------------------------------------------------------------------------------------------------------------------
 Jenkins is an opensource automation tool written in java, that automates some of the development lifecycle  like build, deploy and test
 
 Installation:
@@ -43,4 +45,154 @@ Assignment:
 1. Learn the difference between monolithic and microservices
 2. Install the Jenkins on ec2-server
 3. list all the cicd tools available in the market
+----------------------------------------------------------------------------------------------------------------------------------------------------\
+Class -02 31-12-2025
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+To install the java 17
+sudo apt-get update -y, 
+sudo apt-get install -y openjdk-17-jdk
+
+Command to Switch the Java version
+sudo update-alternatives --config java ----> To switch between java version if we have multiple java version
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+Default Path of Jenkins ------------------> /var/lib/jenkins
+https://github.com/tranju664/example-java
+/var/lib/jenkins/secrets/initialAdminPassword   ---> Location for initial Password
+mvn clean install  ---> To build the maven project
+mvn clean package  ---> To build the maven project
+
+Log path:
+sudo tail -f /var/log/jenkins/jenkins.log
+Common log locations:
+/var/log/jenkins/jenkins.log
+/var/log/syslog
+
+sudo journalctl -u jenkins -f
+----> This is the first place to look if the UI isn’t loading.
+
+---------------------------------------------------------------------------------
+Jenkins Triggers:
+
+1. Build Periodically: If we want to schedule a build periodically we use this option and we define a 
+crontab in the jenkins job
+
+2. PollSCM: PollSCM will only build the project if new commits were made to the source code(Github), we must
+schedule the POLL SCM by using crontab
+
+3. Github Webhook Trigger: Webhook Trigger will trigger the builds as soon as any changes are made
+to the source code (GitHub)
+
+Payload URL: jenkinsurl:8080/github-webhook/
+example: http://3.110.124.162:8080/github-webhook/
+-----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+Plugins:
+
+Plugins help in increasing the capabilities of Jenkins.
+
+1. Monitoring --> To Monitor Jenkins Server
+2. Docker --> To integrate Docker with Jenkins
+3. K8S --> To integrate K8S with Jenkins
+4. Blueocean --> To visualize Jenkin Jobs
+5. Periodic backup --> To take Periodically backup of Jenkins serve
+6. Parameterized Plugins --> To pass inputs to Jenkins jobs
+7. Maven Plugin --> To work on Maven build tool in Jenkins
+8. Artifactory --> To integrate Jfrog with jenkins
+8. CVS - Source Code Management Plugins
+9. Pipeline: Stage View ----> To see the stages in the job
+10. Role-based Authorization Strategy ----> To limit the access to the user on the Project level
+----------------------------------------------------------------------------------------------------------------------------
+Assignment:
+1. Perform build periodically, pollscm and webhook
+2. install all the plugins on the jenkins server
+3. Change the default path of Jenkins to some other path
+4. Learn the difference between mvn clean install vs clean package
+5. How to do the debug of job/pipeline in jenkins?
+6. How do we debug, if Jenkins is not accessible from the UI and how do we fix it and How do we ensure minimum downtime for users(rescue instance)
+--------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------\
+Class -03 01-01-2026
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+Master-Slave in Jenkins
+
+Sometimes you might need several different environments to test your builds. 
+This cannot be done by a single Jenkins server. In such scenarios where we need a different 
+machine with a different environment that takes the specific job from the master to build.
+
+No. Of Executors = This number represents at a single point in time how many different jobs can run
+					in parallel
+
+Agent Server requirements:
+1. Java to be installed ( master and slave should have the same java version)
+2. Proper SSh connection between master and slave
+3. instal necessary softwares like maven, docker etc. as per the requirement
+
+Advantages:
+1. Distribution of load
+2. single point of failure will not be there
+----------------------------------------------------------------------------------------------------------------------------
+Matrix based Security:
+
+Matrix Authorization allows configuring the permissions for each user individually
+
+Project based Security:
+
+Project-based Matrix authorization strategy is an extension to “Matrix-based security”, 
+where you can setup permissions to individual projects. This means that you can allow a specific user
+to access only certain projects.
+
+Role-based Authorization Strategy is a Jenkins plugin that allows administrators to assign specific permissions to users or groups based on defined roles. These roles can be scoped to:
+Global level (e.g., full admin access)
+Project or Job level (e.g., view or build access to specific pipelines)
+Folder level (e.g., permissions to manage jobs within a specific folder)
+
+Project level Access ---> Pattern should be like ( ^Folder-A(/.*)?$ ) ---> replace Folder-A with your Folder name
+| Field       | Value              |
+| ----------- | ------------------ |
+| Role to add | Folder_name        |
+| Pattern     | ^Folder-A(/.*)?$  |
+
+Job level Access -----> Pattern should be like ( ^Job1$ ) ------> replace Job1 with  your Job name
+| Field       | Value              |
+| ----------- | ------------------ |
+| Role to add | Job_name           |
+| Pattern     | ^Job1$             |
+----------------------------------------------------------------------------------------------------------------------------
+Tomcat installation
+----------------------------------------------------------------------------------------------------------------------------
+Step1: wget <tomcat_url>   #dowload the latest tomcat version
+
+Step2: cd bin
+
+step3: sh startup.sh
+
+step4: 
+ find -type f -name context.xml
+./webapps/manager/META-INF/context.xml
+./webapps/host-manager/META-INF/context.xml
+
+<!-- <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+        allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /> -->
+the above 2 line to be commented out in all the above files	
+		
+step 5:		
+cd /conf
+tomcat-user.xml
+# below four lines to be added in the tomcat-users.xml
+ <role rolename="manager-gui"/>
+ <user username="admin" password="admin" roles="manager-gui"/>
+
+ <role rolename="admin-gui"/>
+ <user username="admin" password="admin" roles="manager-gui,admin-gui"/>
+----------------------------------------------------------------------------------------------------------------------------
+Repo URL -----> https://github.com/tranju664/java-war
+----------------------------------------------------------------------------------------------------------------------------			
+Assignment: 
+1. Create a Master-Slave and deploy a .war application to your tomcat slave
+2. Setup Matrix Based Security
+3. Setup Project Based Security
+4. Setup Role-Based Authorization strategy and limit the access on the Folder level
+5. Change the default port of Jenkins (8080) to 8070
+6. If you loose the access to Jenkins as you are admin, how do revert it back?
 ----------------------------------------------------------------------------------------------------------------------------------------------------
+
