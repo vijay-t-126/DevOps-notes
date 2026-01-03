@@ -195,4 +195,255 @@ Assignment:
 5. Change the default port of Jenkins (8080) to 8070
 6. If you loose the access to Jenkins as you are admin, how do revert it back?
 ----------------------------------------------------------------------------------------------------------------------------------------------------
+Class -04 03-01-2026
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+CI/CD set up:
 
+Once dev team pushes code to github, jenkins pipeline job will get triggered, 
+it has 5 stages. git checkout, Scanning, build, deploy and test stages.
+
+In git checkout stage, it will pull the source code from the github, once this stage is success, Scanning will get triggered
+
+In Scanning Stage, It will scan the Source Code, once this stage is success, build stage will get triggered
+
+in build stage, it compiles code  and generates binary. 
+once build stage is success, push stage will get triggered automatically,
+ 
+in push stage, the artifacts generated will be deployed onto to the antifactory, once
+the push stage is complete, deploy stage will get triggered
+
+in deploy stage, war/jar file will get deployed to the environment 
+-----------------------------------------------------------------
+Continuous Integration: is a development practice that requires developers to integrate code 
+into a shared repository several times a day. Each check-in is then verified by an automated build, 
+allowing teams to detect problems early. By integrating regularly, you can detect errors quickly, 
+and locate them more easily.
+
+Continuous Delivery: Continuous delivery picks up where continuous integration ends. 
+CD automates the delivery of applications to selected infrastructure environments. 
+Most teams work with multiple environments other than the production, 
+such as development and testing environments, 
+and CD ensures there is an automated way to push code changes to them.
+
+Continuous Deployment: Continuous deployment goes one step further than continuous delivery. 
+With this practice, every change that passes all stages of your production pipeline is released 
+to your customers. There's no human intervention, and only a failed test will prevent 
+a new change to be deployed to production.
+-----------------------------------------------------------------
+Pipeline:
+In other words, a Jenkins Pipeline is a collection of events that brings the 
+software from version control into the hands of the end users by using automation tools. 
+It is used to incorporate continuous delivery in the software development workflow.
+----------------------------------------------------------------------------------
+pipeline {
+    agent any
+
+    stages {
+        stage('Hello') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+    }
+}
+
+------------
+CICD setup pipeline
+
+pipeline {
+   agent any
+   
+   stages {
+      stage ('git checkout') {
+	    steps {
+		  echo "This is the Checkout stage"
+		  sh 'sleep 10'
+        }
+	  }
+	  stage ('Scanning stage') {
+	    steps {
+		  echo "This is the Scanning stage"
+		  sh 'sleep 10'
+        }
+	  }
+	  stage ('Build stage') {
+	    steps {
+		  echo "This is the Build stage"
+		  sh 'sleep 10'
+        }
+	  }
+	  stage ('Push to artifactory') {
+	    steps {
+		  echo "This is the push stage"
+		  sh 'sleep 10'
+        }
+	  }
+	  stage ('Deploy') {
+	    steps {
+		  echo "This is the Deploy stage"
+		  sh 'sleep 10'
+        }
+	  }
+	}
+}
+-------------------------------------------------
+Pipeline with specific agent
+
+pipeline {
+  agent none
+    
+	stages {
+	   stage ('git checkout stage') {
+	     agent {label 'master'}
+		 steps {
+		    echo "this is the git checkout stage"
+			sh 'sleep 10'
+		 }
+	  }
+	  
+	  stage ('Deploy stage') {
+	    agent {label 'Tomcat'}
+		steps {
+		  echo "this is the deploy stage"
+		}
+	}
+}
+}
+---------------------------------------------------
+pipeline {
+   agent {label 'Tomcat'}
+   
+   stages {
+      stage ('git checkout') {
+	    steps {
+		  echo "This is the Checkout stage"
+		  sh 'sleep 10'
+        }
+	  }
+	  stage ('Scanning stage') {
+	    steps {
+		  echo "This is the Scanning stage"
+		  sh 'sleep 10'
+        }
+	  }
+	  stage ('Build stage') {
+	    steps {
+		  echo "This is the Build stage"
+		  sh 'sleep 10'
+        }
+	  }
+	  stage ('Push to artifactory') {
+	    steps {
+		  echo "This is the push stage"
+		  sh 'sleep 10'
+        }
+	  }
+	  stage ('Deploy') {
+	    steps {
+		  echo "This is the Deploy stage"
+		  sh 'sleep 10'
+        }
+	  }
+	}
+}
+---------------------------------------------------------
+pipeline {
+   agent {label 'master'}
+   
+   stages {
+      stage ('git checkout') {
+	    steps {
+		  echo "This is the Checkout stage"
+		  sh 'sleep 10'
+        }
+	  }
+	  stage ('Scanning stage') {
+	    agent {label 'Tomcat'}
+	    steps {
+		  echo "This is the Scanning stage"
+		  sh 'sleep 10'
+        }
+	  }
+	  stage ('Build stage') {
+	  agent {label 'Docker'}
+	    steps {
+		  echo "This is the Build stage"
+		  sh 'sleep 10'
+        }
+	  }
+	  
+	}
+}
+-------------------------------------------------------------
+pipeline {
+   agent {label 'Tomcat'}
+   
+   stages {
+      stage ('git checkout') {
+	    steps {
+		  git branch: 'main', url: 'https://github.com/tranju664/java-war.git'
+        }
+	  }
+	  stage ('Build stage') {
+	    steps {
+		  sh 'mvn clean install'
+        }
+	  }
+	}
+	post {
+	  failure {
+	     emailext (
+		     to: 'tanuradha546@gmail.com',
+			 subject: "The build got failed",
+			 body: "The build is failed please validate"
+			)
+   		}
+}
+}
+---------------------------------------------------------------
+Email Notification set up
+Generate the App Pasword
+https://myaccount.google.com/apppasswords
+
+Go to Manage Jenkins > Configure System.
+
+Under E-mail Notification, configure the SMTP settings:
+
+SMTP Server Address: (e.g., smtp.gmail.com or smtp.office365.com)
+
+SMTP Port: 587 (for TLS/STARTTLS) or 465 (for SSL)
+
+Use SSL/TLS: Yes (for port 587, use TLS/STARTTLS)
+
+Username: The user’s full email address
+
+Password: The app password generated by the user
+---------------------------------------------------------------------------------------------------------------
+For mail Plugin
+post {
+        failure {
+            mail (
+                to: 'xyz.com',
+                subject: "Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: "The build ${env.JOB_NAME} #${env.BUILD_NUMBER} failed. Please check Jenkins for more details.\n\nBuild URL: ${env.BUILD_URL}"
+            )
+        }
+    }
+
+For extended email plugin
+
+post {
+        failure {
+            emailext (
+                to: 'xyz.com',
+                subject: "Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: "The build ${env.JOB_NAME} #${env.BUILD_NUMBER} failed. Please check Jenkins for more details.\n\nBuild URL: ${env.BUILD_URL}"
+            )
+        }
+    }
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Assignment:
+Learn about the ENV variables in Jenkins
+Learn about Some scenarios of post build actions 
+Learn about upstream and downstream Job
+---------------------------------------------------------------------------------------------------------------------------------------------------
