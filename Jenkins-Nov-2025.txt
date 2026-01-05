@@ -12,7 +12,7 @@ https://www.jenkins.io/download/
 
 Java Installation:
 sudo apt update
-sudo apt install fontconfig openjdk-21-jre
+sudo apt install fontconfig openjdk-21-jre -y
 java --version
 
 sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
@@ -21,6 +21,7 @@ echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
   https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
   /etc/apt/sources.list.d/jenkins.list > /dev/null
 sudo apt update -y
+sudo apt install fontconfig openjdk-21-jre -y
 sudo apt install jenkins -y
 ---------------------------------------------------------------
 
@@ -447,3 +448,178 @@ Learn about the ENV variables in Jenkins
 Learn about Some scenarios of post build actions 
 Learn about upstream and downstream Job
 ---------------------------------------------------------------------------------------------------------------------------------------------------
+Class -05 05-01-2026
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+Parallel Stage
+
+pipeline {
+   agent any
+   
+   stages {
+      stage ('git checkout') {
+	    steps {
+		  echo "This is the Checkout stage"
+		  sh 'sleep 10'
+        }
+	  }
+	  stage ('Testing') {
+	  parallel{
+	   stage ('sonar') {	   
+	    steps {
+		  echo "This is the Scanning stage"
+		  sh 'sleep 10'
+        }
+	  }
+	   stage ('junit') {	   
+	    steps {
+		  echo "This is the junit stage"
+		  sh 'sleep 10'
+        }
+		}
+		}
+		}
+	  stage ('Build stage') {
+	    steps {
+		  echo "This is the Build stage"
+		  sh 'sleep 10'
+        }
+	  }
+	  stage ('Push to artifactory') {
+	    steps {
+		  echo "This is the push stage"
+		  sh 'sleep 10'
+        }
+	  }
+	  stage ('Deploy') {
+	    steps {
+		  echo "This is the Deploy stage"
+		  sh 'sleep 10'
+        }
+	  }
+	}
+}
+-----------------------------------------------------------------------------------
+Parallel Step
+
+pipeline {
+   agent any
+   triggers {
+     pollSCM '* * * * *'   // we can set up trigger
+	 }
+   stages {
+      stage ('git checkout') {
+	    steps {
+		  echo "This is the Checkout stage"
+		  sh 'sleep 10'
+        }
+	  }
+	  stage ('Build stage') {
+	    steps {
+		 parallel (
+		 step1: {
+		  echo "This is the parallel step1"
+		  sh 'sleep 10'
+          },
+         step2: {
+		  echo "This is the parallel step2"
+		  sh 'sleep 10'
+          },
+         step3: {
+		  echo "This is the parallel step3"
+		  sh 'sleep 10'
+          }
+        )		  
+	  }
+	  }
+	  stage ('Deploy') {
+	    steps {
+		  echo "This is the Deploy stage"
+		  sh 'sleep 10'
+        }
+	  }
+	}
+}
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+Jenkins File:
+Jenkins Pipeline can be defined by a text file called JenkinsFile. 
+You can implement pipeline as code using JenkinsFile, 
+and this can be defined by using a groovy DSL (Domain Specific Language). 
+With the help of JenkinsFile, you can write the steps required for running a Jenkins Pipeline.
+
+Default Name of file: Jenkinsfile
+-----------------------------------------------------------------
+Pipeline Syntax:
+
+Two types of syntax are used for defining your JenkinsFile.
+
+DECLARATIVE PIPELINE: 					
+1. New way of writing with simple groovy declaratives
+2. All code is defined inside pipeline block
+
+SCRIPTED PIPELINE:
+1. Old way / Traditional way of pipeline code with scripted groovy syntax
+2. Defined within a node block
+-------------------------------------------------------------------
+SonarQube
+username: admin
+password: admin
+
+SonarQube Scanner for Jenkins ---> plugin for SonarScanner
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+Jfrog Artifactory Setup:
+username: admin
+password: password
+
+Artifactory plugin ----> plugin for JFROG
+
+Jenkins Artifactory Plugin 4.0.8
+maven --version i tool ---> 
+✅ 3.8.6
+✅ 3.8.8
+Java 17+ (based on stack trace using java.base)
+
+
+2️⃣ Maven decides the repo based on version
+| Version in `pom.xml` | Deployed to                     |
+| -------------------- | ------------------------------- |
+| `1.0-SNAPSHOT`       | `snapshotRepo` (libs-snapshot/) |
+| `1.0` or `1.0.1`     | `releaseRepo` (libs-release/)   |
+
+Examples:
+<version>1.0-SNAPSHOT</version>  <!-- Deploys to snapshot repo -->
+<version>1.0</version>           <!-- Deploys to release repo -->
+----------------------------------------------------------------------------
+Repo URl:
+https://github.com/tranju664  ---> check for all the repos in this Github URL
+-----------------------------------------------------------------------------
+Multi branch Pipeline
+
+A Multi-Branch Pipeline is a Jenkins job type that can automatically handle multiple branches of your source code repository without creating a separate job for each branch.
+Instead of manually creating a pipeline per branch, Jenkins automatically:
+
+Scans your repository for branches
+Creates temporary pipeline jobs for each branch it finds
+Runs builds according to a Jenkinsfile in that branch
+
+| Branch        | New commit? | Build triggered? |
+| ------------- | ----------- | ---------------- |
+| main          | yes         | ✅ Yes          |
+| develop       | no          | ❌ No           |
+| feature/login | no          | ❌ No           |
+
+
+Note:
+Multi-branch pipelines are event-driven by default: triggered on new commits or PRs
+Only the branch with new commits is built by default
+Jenkins does not blindly build all branches every time
+----------------------------------------------------------------------------------------------------
+Assignment:
+
+Learn the difference between snapshot and the release
+Perform the Jenkins Migration/upgradation of jenkins
+Learn about the Jacaco plugin in sonar
+what are the checks we do in sonar?
+what kind of pipelines have u used in your organisation ?
+-----------------------------------------------------------------------------------------------------
